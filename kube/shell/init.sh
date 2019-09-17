@@ -14,7 +14,11 @@ sysctl -w net.ipv4.ip_forward=1
 systemctl stop firewalld && systemctl disable firewalld
 swapoff -a
 setenforce 0
-docker load -i ../images/images.tar
+docker load -i ../images/kube-apiserver.tar
+docker load -i ../images/kube-controller-manager.tar
+docker load -i ../images/kube-proxy.tar
+docker load -i ../images/kube-scheduler.tar
+
 cp ../bin/* /usr/bin
 # Cgroup driver
 cp ../conf/kubelet.service /etc/systemd/system/

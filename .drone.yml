@@ -24,6 +24,7 @@ steps:
     - cp ../kubernetes/server/bin/kube-scheduler.tar images/
     - cp ../kubernetes/server/bin/kube-proxy.tar images/
     - cd .. && tar zcvf kube${DRONE_TAG}.tar.gz kube
+    - sed  "s/k8s_version/${DRONE_TAG}/g" -i kubeadm.yaml
   when:
      event:
      - tag
