@@ -18,6 +18,8 @@ docker load -i ../images/kube-apiserver.tar
 docker load -i ../images/kube-controller-manager.tar
 docker load -i ../images/kube-proxy.tar
 docker load -i ../images/kube-scheduler.tar
+docker load -i ../images/cloud-kernel-addon.tar
+
 
 cp ../bin/* /usr/bin
 # Cgroup driver

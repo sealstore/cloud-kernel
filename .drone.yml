@@ -14,7 +14,10 @@ steps:
   image: golang:1.11.3
   commands:
     - wget https://dl.k8s.io/v${DRONE_TAG}/kubernetes-server-linux-amd64.tar.gz
+    - wget https://sealyun.oss-cn-beijing.aliyuncs.com/free/cloud-kernel-addon.tar.gz
     - tar zxvf kubernetes-server-linux-amd64.tar.gz
+    - tar zxvf cloud-kernel-addon.tar.gz
+    - cp cloud-kernel-addon.tar kube/images/
     - cd kube
     - cp ../kubernetes/server/bin/kubeadm bin/
     - cp ../kubernetes/server/bin/kubectl bin/
@@ -25,6 +28,7 @@ steps:
     - cp ../kubernetes/server/bin/kube-proxy.tar images/
     - sed  "s/k8s_version/${DRONE_TAG}/g" -i conf/kubeadm.yaml
     - cd .. && tar zcvf kube${DRONE_TAG}.tar.gz kube
+
   when:
      event:
      - tag
