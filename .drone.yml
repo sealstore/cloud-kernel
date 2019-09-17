@@ -1,0 +1,38 @@
+kind: pipeline
+name: default
+workspace:
+    base: /go
+    path: src/github.com/fanux/cloud-kernel
+
+# go mod vender
+#environment:
+#    GO111MODULE: on
+
+# DRONE_TAG must is k8s tag, not include v
+steps:
+- name: build
+  image: golang:1.11.3
+  commands:
+    - wget https://dl.k8s.io/v${DRONE_TAG}/kubernetes-server-linux-amd64.tar.gz
+    - tar zxvf kubernetes-server-linux-amd64.tar.gz
+    - cd kube
+    - cp ../kubernetes/server/bin/kubeadm bin/
+    - cp ../kubernetes/server/bin/kubectl bin/
+    - cp ../kubernetes/server/bin/kubelet bin/
+    - cp ../kubernetes/server/bin/kube-apiserver.tar images/
+    - cp ../kubernetes/server/bin/kube-controller-manager.tar images/
+    - cp ../kubernetes/server/bin/kube-scheduler.tar images/
+    - cp ../kubernetes/server/bin/kube-proxy.tar images/
+    - cd .. && tar zcvf kube${DRONE_TAG}.tar.gz kube
+
+- name: publish
+  image: plugins/github-release
+  settings:
+    api_key:
+        from_secret: git-release-token
+    files: kube${DRONE_TAG}.tar.gz
+    title: ${DRONE_TAG}
+    note: Note.md
+  when:
+     event:
+     - tag
