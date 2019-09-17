@@ -15,11 +15,12 @@ steps:
   commands:
     - wget https://dl.k8s.io/v${DRONE_TAG}/kubernetes-server-linux-amd64.tar.gz
     - wget https://sealyun.oss-cn-beijing.aliyuncs.com/free/cloud-kernel-addon.tar.gz
+    - wget https://github.com/fanux/kube/releases/download/v${DRONE_TAG}-lvscare/kubeadm
     - tar zxvf kubernetes-server-linux-amd64.tar.gz
     - tar zxvf cloud-kernel-addon.tar.gz
     - cp cloud-kernel-addon.tar kube/images/
+    - cp kubeadm kube/bin/
     - cd kube
-    - cp ../kubernetes/server/bin/kubeadm bin/
     - cp ../kubernetes/server/bin/kubectl bin/
     - cp ../kubernetes/server/bin/kubelet bin/
     - cp ../kubernetes/server/bin/kube-apiserver.tar images/
