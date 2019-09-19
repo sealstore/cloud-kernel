@@ -19,6 +19,7 @@ steps:
     - tar zxvf kubernetes-server-linux-amd64.tar.gz
     - tar zxvf cloud-kernel-addon.tar.gz
     - cp cloud-kernel-addon.tar kube/images/
+    - chmod +x kubeadm
     - cp kubeadm kube/bin/
     - cd kube
     - cp ../kubernetes/server/bin/kubectl bin/
