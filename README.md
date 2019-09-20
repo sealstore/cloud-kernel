@@ -9,3 +9,7 @@ Dockerfile给进程打包，描述一个进程应该如何运行，而sealstore�
 git tag 1.14.6
 git push --tags
 ```
+
+# 虚拟机申请
+
+把配置好的.aliyun/config.json进行base64加密，设置成drone的secret

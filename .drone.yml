@@ -10,39 +10,49 @@ workspace:
 
 # DRONE_TAG must is k8s tag, not include v
 steps:
-- name: build
-  image: golang:1.11.3
+- name: createVM
+  image: fanux/aliyun-cli
+  environment:
+    CONFIG:
+      from_secret: aliyun-cli-config
   commands:
-    - wget https://dl.k8s.io/v${DRONE_TAG}/kubernetes-server-linux-amd64.tar.gz
-    - wget https://sealyun.oss-cn-beijing.aliyuncs.com/free/cloud-kernel-addon.tar.gz
-    - wget https://github.com/fanux/kube/releases/download/v${DRONE_TAG}-lvscare/kubeadm
-    - tar zxvf kubernetes-server-linux-amd64.tar.gz
-    - tar zxvf cloud-kernel-addon.tar.gz
-    - cp cloud-kernel-addon.tar kube/images/
-    - chmod +x kubeadm
-    - cp kubeadm kube/bin/
-    - cd kube
-    - cp ../kubernetes/server/bin/kubectl bin/
-    - cp ../kubernetes/server/bin/kubelet bin/
-    - cp ../kubernetes/server/bin/kube-apiserver.tar images/
-    - cp ../kubernetes/server/bin/kube-controller-manager.tar images/
-    - cp ../kubernetes/server/bin/kube-scheduler.tar images/
-    - cp ../kubernetes/server/bin/kube-proxy.tar images/
-    - sed  "s/k8s_version/${DRONE_TAG}/g" -i conf/kubeadm.yaml
-    - cd .. && tar zcvf kube${DRONE_TAG}.tar.gz kube
+    - echo $CONFIG | base64 --decode >> ~/.aliyun/config.json
+    - aliyun ecs RunInstances --Amount 1 --ImageId centos_7_04_64_20G_alibase_201701015.vhd --InstanceType ecs.c5.xlarge --Action RunInstances --InternetChargeType PayByTraffic --InternetMaxBandwidthIn 5 --InternetMaxBandwidthOut 5 --Password Fanux#123 --InstanceChargeType PostPaid --SpotStrategy SpotAsPriceGo --RegionId cn-hongkong  --SecurityGroupId sg-j6cg7qx8vufo7vopqwiy --VSwitchId vsw-j6crutzktn5vdivgeb6tv --ZoneId cn-hongkong-b
 
-  when:
-     event:
-     - tag
 
-- name: publish
-  image: plugins/github-release
-  settings:
-    api_key:
-        from_secret: git-release-token
-    files: kube${DRONE_TAG}.tar.gz
-    title: ${DRONE_TAG}
-    note: Note.md
-  when:
-     event:
-     - tag
+      #- name: build
+      #  image: golang:1.11.3
+      #  commands:
+      #    - wget https://dl.k8s.io/v${DRONE_TAG}/kubernetes-server-linux-amd64.tar.gz
+      #    - wget https://sealyun.oss-cn-beijing.aliyuncs.com/free/cloud-kernel-addon.tar.gz
+      #    - wget https://github.com/fanux/kube/releases/download/v${DRONE_TAG}-lvscare/kubeadm
+      #    - tar zxvf kubernetes-server-linux-amd64.tar.gz
+      #    - tar zxvf cloud-kernel-addon.tar.gz
+      #    - cp cloud-kernel-addon.tar kube/images/
+      #    - chmod +x kubeadm
+      #    - cp kubeadm kube/bin/
+      #    - cd kube
+      #    - cp ../kubernetes/server/bin/kubectl bin/
+      #    - cp ../kubernetes/server/bin/kubelet bin/
+      #    - cp ../kubernetes/server/bin/kube-apiserver.tar images/
+      #    - cp ../kubernetes/server/bin/kube-controller-manager.tar images/
+      #    - cp ../kubernetes/server/bin/kube-scheduler.tar images/
+      #    - cp ../kubernetes/server/bin/kube-proxy.tar images/
+      #    - sed  "s/k8s_version/${DRONE_TAG}/g" -i conf/kubeadm.yaml
+      #    - cd .. && tar zcvf kube${DRONE_TAG}.tar.gz kube
+      #
+      #  when:
+      #     event:
+      #     - tag
+      #
+      #- name: publish
+      #  image: plugins/github-release
+      #  settings:
+      #    api_key:
+      #        from_secret: git-release-token
+      #    files: kube${DRONE_TAG}.tar.gz
+      #    title: ${DRONE_TAG}
+      #    note: Note.md
+      #  when:
+      #     event:
+      #     - tag
